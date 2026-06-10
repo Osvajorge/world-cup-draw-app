@@ -12,9 +12,10 @@ export default function DrawEqual({ participants, onReset }) {
   }, [participants]);
 
   const draws = useMemo(() => {
-    const slots = Array.from({ length: 12 }, (_, i) => participants[i % participants.length]);
+    const expanded = Array.from({ length: 12 }, (_, i) => participants[i % participants.length]);
+    const sNames = shuffle(expanded);
     const sGroups = shuffle([...Array(12).keys()]);
-    return slots.map((p, i) => ({ participant: p, groupIdx: sGroups[i], color: ACCENT_COLORS[i] }));
+    return sNames.map((p, i) => ({ participant: p, groupIdx: sGroups[i], color: ACCENT_COLORS[i] }));
   }, [participants]);
 
   const slot = useSlotMachine({ participants, draws, onComplete: () => {} });
