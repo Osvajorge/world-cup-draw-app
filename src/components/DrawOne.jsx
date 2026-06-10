@@ -1,4 +1,5 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
+import html2canvas from 'html2canvas';
 import { BG, ACCENT_COLORS } from '../constants';
 import { shuffle } from '../utils/random';
 import { useSlotMachine } from '../hooks/useSlotMachine';
@@ -103,6 +104,16 @@ export default function DrawOne({ participants, onReset }) {
   const extrasAssigned = extraResults.length;
   const extrasRemaining = remaining - extrasAssigned;
 
+  const captureRef = useRef(null);
+  const handleDownload = useCallback(async () => {
+    if (!captureRef.current) return;
+    const canvas = await html2canvas(captureRef.current, { backgroundColor: '#0B0E1A', scale: 2 });
+    const link = document.createElement('a');
+    link.download = 'sorteo-mundial-2026.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  }, []);
+
   if (drawPhase === 'volunteering') {
     return (
       <div className="h-screen flex flex-col overflow-hidden" style={{ background: BG }}>
@@ -205,15 +216,22 @@ export default function DrawOne({ participants, onReset }) {
   return (
     <div className="h-screen flex flex-col overflow-hidden" style={{ background: BG }}>
       <DrawHeader onReset={onReset} completed={allCompleted} total={12} />
-      <div className="flex-shrink-0 text-center py-4 px-4" style={{ animation: 'fade-slide-in 0.6s both' }}>
-        <div className="text-4xl mb-2">🏆</div>
-        <h2 className="text-2xl font-black text-white mb-0.5">¡SORTEO COMPLETO!</h2>
-        <p className="text-white/40 text-xs tracking-wider">Que gane el mejor grupo</p>
-      </div>
       <div className="flex-1 overflow-y-auto px-4 pb-4">
         <div className="max-w-5xl mx-auto">
-          <ResultsGrid participants={participants} completed={allCompleted} colorMap={colorMap} />
-          <div className="flex justify-center mt-6">
+          <div ref={captureRef} style={{ background: '#0B0E1A', padding: '24px 16px' }}>
+            <div className="text-center pb-4" style={{ animation: 'fade-slide-in 0.6s both' }}>
+              <div className="text-4xl mb-2">🏆</div>
+              <h2 className="text-2xl font-black text-white mb-0.5">¡SORTEO COMPLETO!</h2>
+              <p className="text-white/40 text-xs tracking-wider">Que gane el mejor grupo</p>
+            </div>
+            <ResultsGrid participants={participants} completed={allCompleted} colorMap={colorMap} />
+          </div>
+          <div className="flex justify-center gap-3 mt-6">
+            <button onClick={handleDownload}
+              className="px-8 py-3 rounded-xl font-bold text-sm tracking-wide transition-all hover:scale-105 active:scale-95"
+              style={{ background: 'linear-gradient(135deg, #D4AF37, #F5D77A)', color: '#0B0E1A' }}>
+              GUARDAR IMAGEN
+            </button>
             <button onClick={onReset}
               className="px-8 py-3 rounded-xl font-bold text-sm tracking-wide border border-white/10 text-white/60 hover:text-white hover:border-white/30 transition-all">
               NUEVO SORTEO
