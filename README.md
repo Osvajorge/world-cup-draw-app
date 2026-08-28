@@ -4,6 +4,8 @@
 
 Interactive World Cup group draw simulator built with **React**, **Vite**, and **Tailwind CSS**.
 
+**[Open the app](https://world-cup-draw-app.pages.dev)**
+
 </div>
 
 This app lets you create a World Cup-style draw with animated transitions and two game modes.
